@@ -1,4 +1,4 @@
-name: Node.js CI
+name: CI + Deploy to Render
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,18 +15,20 @@ jobs:
         node-version: [16, 18]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm test
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+  deploy:
+    # Only deploy if all tests pass
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
-    - run: npm install
-
-    - name: Run tests
-      run: npm test
-      env:
-        PORT: 3000
-        # Add more env vars if needed, like:
-        # DB_URL: mongodb://localhost:27017/test
+    steps:
+      - name: Trigger Render Deploy
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
