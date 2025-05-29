@@ -2,7 +2,7 @@ name: Deploy to Render
 
 on:
   workflow_run:
-    workflows: ["Node.js CI"]
+    workflows: ["index.js CI"]
     types:
       - completed
 
@@ -14,9 +14,9 @@ jobs:
     steps:
       - name: Ensure deploy hook is set
         run: |
-          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
-            echo "Missing RENDER_DEPLOY_HOOK secret"; exit 1;
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "Missing RENDER_DEPLOY_HOOK_URL secret"; exit 1;
           fi
 
       - name: Trigger Render deploy
-        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
