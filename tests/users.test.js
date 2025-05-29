@@ -1,12 +1,17 @@
 const request = require('supertest');
 const express = require('express');
 const usersRouter = require('../routes/users');
+const { resetUsers } = require('../routes/users');
 
 const app = express();
 app.use(express.json());
 app.use('/users', usersRouter);
 
 describe('Users API', () => {
+  beforeEach(() => {
+    resetUsers();  // Reset users to initial state before each test
+  });
+
   test('GET /users should return array', async () => {
     const res = await request(app).get('/users');
     expect(res.statusCode).toBe(200);
