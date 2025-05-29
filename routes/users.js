@@ -1,3 +1,4 @@
+// routes/users.js
 const express = require('express');
 const router = express.Router();
 
@@ -5,6 +6,14 @@ let users = [
   { id: 1, name: 'Alice' },
   { id: 2, name: 'Bob' }
 ];
+
+// Function to reset users (for testing)
+function resetUsers() {
+  users = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Bob' }
+  ];
+}
 
 // GET /users - get all users
 router.get('/', (req, res) => {
@@ -50,3 +59,4 @@ router.delete('/:id', (req, res) => {
 });
 
 module.exports = router;
+module.exports.resetUsers = resetUsers;
