@@ -2,7 +2,7 @@ name: Deploy to Render
 
 on:
   workflow_run:
-    workflows: ["index.js CI"]
+    workflows: ["Node.js CI"]   # <-- fixed workflow name here
     types:
       - completed
 
