@@ -1,35 +1,52 @@
 const express = require('express');
 const router = express.Router();
 
-const users = [
-  { id: 1, name: "Alice" },
-  { id: 2, name: "Bob" },
-  { id: 3, name: "Charlie" },
-  { id: 4, name: "Diana" },
-  { id: 5, name: "Ethan" },
-  { id: 6, name: "Fiona" },
-  { id: 7, name: "George" },
-  { id: 8, name: "Hannah" },
-  { id: 9, name: "Ian" },
-  { id: 10, name: "Jane" },
-  { id: 11, name: "Kevin" },
-  { id: 12, name: "Laura" },
-  { id: 13, name: "Mike" },
-  { id: 14, name: "Nina" },
-  { id: 15, name: "Oscar" },
-  { id: 16, name: "Paula" },
-  { id: 17, name: "Quinn" },
-  { id: 18, name: "Rachel" },
-  { id: 19, name: "Steve" },
-  { id: 20, name: "Tina" },
-  { id: 21, name: "Uma" },
-  { id: 22, name: "Victor" },
-  { id: 23, name: "Wendy" },
-  { id: 24, name: "Xavier" },
-  { id: 25, name: "Yara" },
-  { id: 26, name: "Zack" }
+let users = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' }
 ];
 
-router.get('/', (req, res) => res.json(users));
+// GET /users - get all users
+router.get('/', (req, res) => {
+  res.json(users);
+});
+
+// POST /users - add new user
+router.post('/', (req, res) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ error: 'Name is required' });
+
+  const newUser = { id: users.length + 1, name };
+  users.push(newUser);
+  res.status(201).json(newUser);
+});
+
+// GET /users/:id - get one user by ID
+router.get('/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  res.json(user);
+});
+
+// PUT /users/:id - update user
+router.put('/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  const { name } = req.body;
+  if (name) user.name = name;
+
+  res.json(user);
+});
+
+// DELETE /users/:id - remove user
+router.delete('/:id', (req, res) => {
+  const index = users.findIndex(u => u.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ error: 'User not found' });
+
+  const removed = users.splice(index, 1)[0];
+  res.json(removed);
+});
 
 module.exports = router;
