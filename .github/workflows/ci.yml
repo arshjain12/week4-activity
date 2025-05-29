@@ -1,4 +1,4 @@
-name: CI + Deploy to Render
+name: Node.js CI
 
 on:
   push:
@@ -9,7 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [16, 18]
@@ -24,24 +23,5 @@ jobs:
 
       - run: npm install
 
-      - name: Run tests with secret key
+      - name: Run tests
         run: npm test
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: Fail if RENDER_DEPLOY_HOOK is not set
-        run: |
-          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
-            echo "Missing RENDER_DEPLOY_HOOK secret"; exit 1;
-          fi
-
-      - name: Trigger Render Deploy
-        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
