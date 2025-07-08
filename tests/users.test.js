@@ -43,3 +43,4 @@ describe('Users API', () => {
     expect(res.body).toHaveProperty('name');
   });
 });
+
